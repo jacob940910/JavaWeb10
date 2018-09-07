@@ -1,5 +1,7 @@
 package service;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import dao.UserDao;
@@ -52,5 +54,44 @@ public class UserServiceImpl implements UserService {
 		
 		//결과 리턴
 		return user;
+	}
+
+	@Override
+	public boolean registerMember(HttpServletRequest request) {
+		boolean result = false;
+		
+		//파라미터를 읽기
+		try {
+			request.setCharacterEncoding("utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		String email = request.getParameter("email");
+		String pw = request.getParameter("pw");
+		String name = request.getParameter("name");
+		String phone = request.getParameter("phone");
+		String addr = request.getParameter("addr");
+		
+		//Dao 메소드의 파라미터 만들기
+		TMember member = new TMember();
+		member.setEmail(email);
+		member.setPw(pw);
+		member.setName(name);
+		member.setPhone(phone);
+		member.setAddr(addr);
+		
+		//Dao 메소드 호출
+		result = userDao.registerMember(member);
+
+		return false;
+	}
+
+	@Override
+	public boolean emailCheck(HttpServletRequest request) {
+		//파라미터 읽어오기 
+		String email = request.getParameter("email");
+		//Dao의 메소드 호출
+		boolean result = userDao.emailCheck(email);
+		return false;
 	}
 }

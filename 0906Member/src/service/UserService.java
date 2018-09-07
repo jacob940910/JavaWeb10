@@ -9,4 +9,8 @@ import vo.TMember;
 public interface UserService {
 	//로그인을 처리하는 메소드 
 	public TMember login(HttpServletRequest request);
+	
+	public boolean registerMember(HttpServletRequest request);
+	
+	public boolean emailCheck(HttpServletRequest request);
 }

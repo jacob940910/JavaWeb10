@@ -9,4 +9,8 @@ public interface UserDao {
 	//매개변수는 아이디와 비밀번호 -> 하나로 묶어서 받습니다.
 	//처리결과는 아이디와 기타 필요한 정보 -> 하나로 묶어서 리턴
 	public TMember login(TMember tmember);
+	
+	public boolean registerMember(TMember member);
+	
+	public boolean emailCheck(String email);
 }

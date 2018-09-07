@@ -78,4 +78,76 @@ public class UserDaoImpl implements UserDao {
 		System.out.println("리턴하는 데이터:" + user);
 		return user;
 	}
+
+	@Override
+	public boolean registerMember(TMember member) {
+		boolean result = false;
+		try {
+			//데이터 베이스 접속
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jacob?characterEncoding=UTF-8&serverTimezone=UTC", "root", "12345678");
+			//sql 실행객체 생성 
+			pstmt = con.prepareStatement("insert into tmember(email, pw, name, phone, addr)" + "values(?,?,?,?,?,?)");
+			//?에 데이터 바인딩
+			pstmt.setString(1,  member.getEmail());
+			pstmt.setString(2,  member.getPw());
+			pstmt.setString(3,  member.getName());
+			pstmt.setString(4,  member.getPhone());
+			pstmt.setString(5,  member.getAddr());
+			
+			//sql 실행
+			int r = pstmt.executeUpdate();
+			if(r > 0)
+				result = true;
+			
+		}catch(Exception e) {
+			//예메시지를 확인 
+			System.out.println(e.getMessage());
+			//예외를 추적 
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null)rs.close();
+				if(pstmt != null)pstmt.close();
+				if(con != null)con.close();
+			}catch(Exception e) {}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean emailCheck(String email) {
+		boolean result = false;
+		try {
+			//데이터베이스 접속
+			con = DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/jacob?characterEncoding=UTF-8&serverTimezone=UTC", "root", "12345678");
+			//SQL 실행 객체 생성
+			pstmt = con.prepareStatement(
+				"select email from tmember where email = ?");
+			//?에 데이터 바인딩
+			pstmt.setString(1,email);
+			
+			//SQL 실행
+			rs = pstmt.executeQuery();
+			
+			//데이터가 검색되면 result 는 true
+			if(rs.next()) {
+				result = true;
+			}
+			
+		}catch(Exception e) {
+			//예외메시지 확인
+			System.out.println(e.getMessage());
+			//예외를 역추적
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(con != null)con.close();
+			}catch(Exception e) {}
+		}
+		
+		return false;
+	}
 }

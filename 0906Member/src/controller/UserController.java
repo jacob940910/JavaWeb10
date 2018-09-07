@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
+import org.json.JSONObject;
 
 import service.UserService;
 import service.UserServiceImpl;
@@ -40,7 +40,9 @@ public class UserController extends HttpServlet {
 		//command가 콘솔에 출력이 안되면 
 		//url 처리하지 못하는 것입니다.
 		//form에서 전송할 때 사용할 URL과 Servlet이 처리하는 URL이 같은지 확
-		System.out.println(command);
+		//System.out.println(command);
+		RequestDispatcher dispatcher = null;
+		
 		switch(command) {
 		case "user/login" :
 			//서비스 메소드 호출
@@ -71,8 +73,42 @@ public class UserController extends HttpServlet {
 			//출력하는 페이지 경로를 설정할때는 URL을 기준으로 합니다.
 			//지금 URL이 user/register 이므로
 			//기준위치는 WebContent/user 입니다. 
-			RequestDispatcher dispatcher = request.getRequestDispatcher("../member/register.jsp");
+			dispatcher = request.getRequestDispatcher("../member/register.jsp");
 			dispatcher.forward(request, response);
+			break;
+			
+		case "user/insert":
+			//이 문장이 안나오면 링크 확인
+			System.out.println("회원가입 처리");
+			boolean r = userService.registerMember(
+					request);
+			if(r == true) {
+				//회원가입에 성공했을 때 처리
+				session.setAttribute(
+					"msg", "회원 가입에 성공하셨습니다.");
+				response.sendRedirect("../");
+			}else {
+				//회원가입에 실패했을 때 처리
+				session.setAttribute(
+					"registermsg", 
+					"회원 가입에 실패하셨습니다.");
+				response.sendRedirect("register");
+			}
+			
+			break;
+			
+		case "user/emailcheck" : 
+			boolean result = userService.emailCheck(request);
+			//json으로 출력할 때는 리턴받은 데이터를 바로 저장하지 않고 
+			//json 객체로 변환해서 저장
+			JSONObject obj = new JSONObject();
+			obj.put("result", result);
+			//데이터를 저장
+			request.setAttribute("result", result);
+			//결과 페이지로 포워딩 - 리다이렉트로 가능
+			dispatcher = request.getRequestDispatcher("/member/emailcheck.jsp");
+			dispatcher.forward(request,  response);
+			
 			break;
 		}
 	}
